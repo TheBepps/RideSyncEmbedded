@@ -1,0 +1,14 @@
+MCU:
+
+- STDES-BFTAG01 Battery-free light sensor tag based on STM32L0 and BlueNRG-2
+
+
+IMU boards:
+
+- Adafruit LSM6DSOX + LIS3MDL - Precision 9-DoF IMU Board
+- SparkFun 9DoF IMU Breakout - ICM-20948 (Qwiic)
+
+
+Power management:
+- TEG
+- LTC3108
