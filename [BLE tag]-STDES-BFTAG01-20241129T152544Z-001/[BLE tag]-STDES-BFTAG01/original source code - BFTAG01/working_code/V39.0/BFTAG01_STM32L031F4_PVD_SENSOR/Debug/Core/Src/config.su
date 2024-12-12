@@ -1,0 +1,9 @@
+config.c:244:13:My_Enter_Stop_Mode_WFI	8	static
+config.c:182:13:My_BLE_WFE_conf	32	static
+config.c:190:13:My_VBLUE_conf	32	static
+config.c:156:13:My_hts221_config	16	static
+config.c:205:13:My_Power_Management.part.1	16	static
+config.c:205:13:My_Power_Management.constprop	16	static
+config.c:132:6:My_Write_Mcu_Flash	16	static
+config.c:292:6:My_Main	16	static
+config.c:332:6:My_While	24	static

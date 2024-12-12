@@ -1,0 +1,57 @@
+
+#if TAG
+#include "TAG.h"
+
+void My_Device_Init(void){
+  TAG_Device_Init();
+}
+
+void My_GPIO_Configuration(void){
+  TAG_GPIO_Configuration();
+}
+
+void My_SdkEvalComUartInit(uint32_t baudrate) {
+  TAG_SdkEvalComUartInit(baudrate);
+}
+
+void My_Main(void){
+  TAG_Main(); 
+}
+
+void My_While(void){
+  TAG_While();
+}
+
+void My_IT(void){
+  TAG_IT();
+}
+
+#else
+
+#include "Base_Station.h"
+
+void My_Device_Init(void){
+  BS_Device_Init();
+}
+
+void My_GPIO_Configuration(void){
+  BS_GPIO_Configuration();
+}
+
+void My_SdkEvalComUartInit(uint32_t baudrate) {
+  BS_SdkEvalComUartInit(baudrate);
+}
+
+void My_Main(void){
+  BS_Main(); 
+}
+
+void My_While(void){
+  BS_While();
+}
+
+void My_IT(void){
+  BS_IT();
+}
+
+#endif

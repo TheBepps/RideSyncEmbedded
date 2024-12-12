@@ -1,0 +1,5 @@
+hts221.c:11:6:hts221_init	48	static
+hts221.c:26:6:hts221_read_temperature	56	static
+hts221.c:36:6:hts221_read_temperature_cal_values	72	static
+hts221.c:63:6:hts221_read_humidity_cal_values	64	static
+hts221.c:87:6:hts221_read_humidity	56	static
