@@ -10,5 +10,10 @@ IMU boards:
 
 
 Power management:
-- TEG
 - LTC3108
+
+Current sense amplifier:
+-INA190, INA191(new version, almost the same as 190), INA2191(dual channel)
+
+Ideal diode
+-sip32431
