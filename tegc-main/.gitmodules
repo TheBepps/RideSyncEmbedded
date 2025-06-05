@@ -1,0 +1,10 @@
+[submodule "acquisition-board/Core/Lib/micro-libs"]
+	path = acquisition-board/Core/Lib/micro-libs
+	url = git@github.com:eagletrt/micro-libs.git
+[submodule "app/external/imgui"]
+	path = app/external/imgui
+	url = git@github.com:ocornut/imgui
+	branch = docking
+[submodule "app/external/implot"]
+	path = app/external/implot
+	url = git@github.com:epezent/implot

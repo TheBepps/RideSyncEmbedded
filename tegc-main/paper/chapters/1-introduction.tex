@@ -1,0 +1,28 @@
+% The very first letter is a 2 line initial drop letter followed
+% by the rest of the first word in caps.
+% 
+% form to use if the first word consists of a single letter:
+% \IEEEPARstart{A}{demo} file is ....
+% 
+% form to use if you need the single drop letter followed by
+% normal text (unknown if ever used by the IEEE):
+% \IEEEPARstart{A}{}demo file is ....
+% 
+% Some journals put the first two words in caps:
+% \IEEEPARstart{T}{his demo} file is ....
+% 
+% Here we have the typical use of a "T" for an initial drop letter
+% and "HIS" in caps to complete the first word.
+
+% Context of the work
+
+\IEEEPARstart{T}{EG} are mainly used in the context of energy harvesting, both on an industrial scale (generally large amounts of energy from chemical reactions) and for low power electronic devices (e.g., batteryless or hybrid systems). Wearable electronics, i.e., powering devices with body heat, is becoming popular in this field. However, having rigid TEGs was a limitation for developments in this field, as they are particularly uncomfortable when worn, a problem solved by the development of \textbf{flexible TEG modules} ~\cite{flexibletegc}. These use fiber-based materials that allow the TEG to be bent and adapted to curved surfaces, such as an arm.
+\\
+Currently, the TEG model we received has no characterization, so it is not possible to know how it behaves in terms of efficiency and power generated.
+Characterization is essential to understand how the TEG behaves under real conditions and to be able to use it in a power generation system.
+The efficiency of a TEG is governed by the dimensionless figure of merit \textbf{Zero Temperature Difference} (\textbf{ZT}), which depends on the material's \textbf{Seebeck coefficient, electrical conductivity and thermal conductivity}.
+Improvements in any of these parameters can lead to enhanced performance, but they often involve trade-offs, such as increased electrical conductivity leading to higher thermal conductivity, which can reduce the temperature gradient needed for power generation.
+The ideal TEG has a high Seebeck coefficient, high electrical conductivity, and low thermal conductivity.
+The best way to characterize a TEG is to \textbf{measure the open-circuit voltage and the current generated with a load resistor}. 
+These data can be used to fit the Seebeck model and find the internal parameters of the TEG. 
+
