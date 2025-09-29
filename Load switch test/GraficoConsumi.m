@@ -6,28 +6,30 @@ P_NAND4 = 231e-9;        % Power per group of 4 NAND gates [W]
 
 % Sweep ranges
 n_vals = linspace(3,8.9,100);                         % number of inputs
-n_vals_disc = 3:8.9;
 %I_vals = logspace(-4, -2, 200);       % current from 100 uA to 10 mA, finer grid
 I_vals = linspace(100e-6, 5e-3, 50);
 
 % Create meshgrid
 [N, I] = meshgrid(n_vals, I_vals);
-[N_disc, I_disc] = meshgrid(n_vals_disc, I_vals);
 
 %% Configuration A: SIP + TLV
 P_SIP = (I.^2) * Rds_on;                       % power per SIP
-P_SIP_disc = (I_disc.^2) * Rds_on;
 P_tot_A = (floor(N) - 1) .* (P_TLV + P_SIP);          % total power
-P_tot_A_disc = (N_disc - 1) .* (P_TLV + P_SIP_disc);
 
 %% Configuration B: SIP + TLV + Logic
-logic_groups = ones(size(N));     % inizializzi tutto a 1
-logic_groups(N >= 4) = 2;         % per N >= 4 assegni 2
-logic_groups_disc = ceil(N_disc ./ 4);
-P_logic = logic_groups .* (P_AND4 + P_NAND4);  % total logic contribution
-P_logic_disc = logic_groups_disc .* (P_AND4 + P_NAND4);
-P_tot_B = floor(N) .* P_TLV + P_logic + P_SIP;        % total power
-P_tot_B_disc = N_disc .* P_TLV + P_logic_disc + P_SIP_disc;
+% Numero intero da usare per i gruppi logici
+N_int = floor(N);          % o round(N) se vuoi arrotondare al più vicino intero
+
+% Numero dispositivi logici richiesti (arrotondati per eccesso)
+logic_groups_NAND = ceil((N_int .* (N_int-1) ./ 2) ./ 4);   % NAND a gruppi di 4
+logic_groups_AND  = ceil((N_int .* (N_int-2)) ./ 4);        % AND a gruppi di 4
+
+% Potenza totale
+P_tot_B = P_SIP ...
+         + (N_int .* (N_int-1) ./ 2) .* P_TLV ...   % continua per P_TLV
+         + logic_groups_NAND .* P_NAND4 ... % gradino per NAND
+         + logic_groups_AND  .* P_AND4;     % gradino per AND
+
 
 %% Figure 1: Configuration A
 figure;
@@ -39,7 +41,7 @@ ylabel('Input Current I [\muA]');
 zlabel('Power Dissipation [\muW]');
 title('Configuration A: SIP + TLV');
 legend(hA,'Config A (SIP+TLV)','Location','best');
-grid on; view(45,30);
+grid on; view(-45,30);
 xticks(3:1:8)   % Mostra solo 3,4,5,6,7,8
 
 %% Figure 2: Configuration B
@@ -52,7 +54,7 @@ ylabel('Input Current I [\muA]');
 zlabel('Power Dissipation [\muW]');
 title('Configuration B: SIP + TLV + Logic');
 legend(hB,'Config B (SIP+TLV+Logic)','Location','best');
-grid on; view(45,30);
+grid on; view(-45,30);
 xticks(3:1:8)   % Mostra solo 3,4,5,6,7,8
 
 
@@ -64,14 +66,17 @@ C_A = (P_tot_A - min(P_tot_A(:))) / (max(P_tot_A(:)) - min(P_tot_A(:)));
 C_B = (P_tot_B - min(P_tot_B(:))) / (max(P_tot_B(:)) - min(P_tot_B(:)));
 
 % Config A: celeste chiaro -> blu intenso
-RGB_A = cat(3, 0.4 + 0.1*C_A, 0.8 - 0.3*C_A, 1 - 0.2*C_A);  
+%RGB_A = cat(3, 0.4 + 0.1*C_A, 0.8 - 0.3*C_A, 1 - 0.2*C_A);  
+RGB_A = cat(3, 0.8*C_A + 0.2, 0.5*C_A + 0.2, 1 - 0.5*C_A);
 
-% Config B: giallo chiaro -> rosso intenso
-RGB_B = cat(3, ones(size(C_B)), 1 - 0.5*C_B, 0.2 + 0.8*C_B);  
+%RGB_A = cat(3, (1-C_A), (1-C_A), (1-C_A));
+
+% Config B: Rosso intenso -> Verde puro
+RGB_B = cat(3, 1 - C_B, C_B, zeros(size(C_B)));  
 
 % Plot superfici
 hA = surf(N, I*1e6, P_tot_A*1e6, RGB_A, ...
-          'FaceAlpha',0.6, 'EdgeColor','none', 'FaceColor','interp');
+          'FaceAlpha',0.7, 'EdgeColor','none', 'FaceColor','interp');
 hB = surf(N, I*1e6, P_tot_B*1e6, RGB_B, ...
           'FaceAlpha',0.6, 'EdgeColor','none', 'FaceColor','interp');
 
@@ -87,6 +92,21 @@ for ni = 1:length(n_vals)
     end
 end
 
+% Aggiungi linee verticali lungo la corrente per N interi
+n_int = 3:8;   % valori interi di N
+for k = 1:length(n_int)
+    % Trova il primo indice in cui n_vals è maggiore o uguale a n_int(k)
+    idx = find(n_vals >= n_int(k), 1, 'first');
+    
+    % Estrai la colonna di potenza per N intero
+    P_A_col = P_tot_A(:, idx);
+    P_B_col = P_tot_B(:, idx);
+    
+    % Traccia le linee 3D
+    plot3(n_vals(idx)*ones(size(I)), I*1e6, P_A_col*1e6, 'k', 'LineWidth', 1.5);
+    plot3(n_vals(idx)*ones(size(I)), I*1e6, P_B_col*1e6, 'k', 'LineWidth', 1.5);
+end
+
 xticks(3:1:8)   % Mostra solo 3,4,5,6,7,8
 xlabel('Number of Inputs (n)');
 ylabel('Input Current I [\muA]');
@@ -98,30 +118,29 @@ legend([hA, hB, hInt], ...
        {'Config A (SIP+TLV)','Config B (SIP+TLV+Logic)','Intersection'}, ...
        'Location','best');
 
-grid on; view(45,30);
+grid on; view(-45,30);
 hold off;
 
 
 %% calcolo interserioni
-P_TLV   = 248e-9;
-Rds_on  = 178e-3;
-P_AND4  = 231e-9;
-P_NAND4 = 231e-9;
 P_logic_unit = P_AND4 + P_NAND4;
-
-n = 3:8;
+n = 3:8;    % valori discreti di N (input count)
 I_vals = zeros(size(n));
-for k = 1:length(n)
-    if n(k) == 3
-        logic_groups = 1;
-    else
-        logic_groups = 2;
-    end
+
+for k = 1:length(n)    
+    % Numero di gruppi logici per questo valore di n
+    logic_groups = floor((n(k) - 1) / 4) + 1;
+
+    % Potenza logica
     P_logic = logic_groups * P_logic_unit;
-    I_vals(k) = sqrt( (P_TLV + P_logic) / ((n(k)-2)*Rds_on) );
+    
+    % Intersezione: P_tot_A = P_tot_B  → ricavo la corrente I
+    I_vals(k) = sqrt( (P_TLV + P_logic) / ((n(k)-2) * Rds_on) );
 end
 
-table(n.', I_vals.', I_vals.'*1e3, I_vals.'*1e6, ...
+% Mostra tabella con correnti
+result = table(n.', I_vals.', I_vals.'*1e3, I_vals.'*1e6, ...
       'VariableNames', {'n','I_A','I_mA','I_uA'})
+
 
 
