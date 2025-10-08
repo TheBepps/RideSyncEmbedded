@@ -14,7 +14,10 @@ I_vals = linspace(100e-6, 5e-3, 50);
 
 %% Configuration A: SIP + TLV
 P_SIP = (I.^2) * Rds_on;                       % power per SIP
-P_tot_A = (floor(N) - 1) .* (P_TLV + P_SIP);          % total power
+P_tot_A_w = (floor(N) - 1) .* (P_TLV + P_SIP);           % power worst case
+P_tot_A_b = (floor(N) - 1) .* (P_TLV)  + P_SIP;          % power best case
+P_tot_A = (0.6*P_tot_A_b+0.4*P_tot_A_w);
+
 
 %% Configuration B: SIP + TLV + Logic
 % Numero intero da usare per i gruppi logici
