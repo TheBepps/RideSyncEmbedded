@@ -6,7 +6,7 @@
 clear; clc; close all;
 
 % === Path del file CSV ===
-fname = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\OpAmp\spectrum_max40018-differential\20251008-analisi_rumore-400k.csv';
+fname = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\OpAmp\spectrum_max40018-differential\20251008-analisi_rumore-400k\20251008-analisi_rumore-400k_01.csv';
 
 % === Lettura file con due righe di intestazione ===
 opts = detectImportOptions(fname, 'NumHeaderLines', 2);
@@ -32,7 +32,7 @@ grid on;
 xlabel('Frequenza [kHz]');
 ylabel('Ampiezza [dBu]');
 title('Spettro Vout1 (Channel B)');
-set(gca, 'XScale', 'log'); % se vuoi scala logaritmica
+%set(gca, 'XScale', 'log'); % se vuoi scala logaritmica
 legend('Channel B');
 
 %% === Plot Canale D (Vout2) ===
@@ -42,6 +42,17 @@ grid on;
 xlabel('Frequenza [kHz]');
 ylabel('Ampiezza [dBu]');
 title('Spettro Vout2 (Channel D)');
-set(gca, 'XScale', 'log'); % scala logaritmica
+%set(gca, 'XScale', 'log'); % scala logaritmica
 legend('Channel D');
 
+%% === Plot dei due canali sulla stessa figura ===
+figure('Name','Spettro OpAmp MAX40018','NumberTitle','off');
+plot(freq_kHz, chB_dBu, 'b', 'LineWidth', 1.3); hold on;
+plot(freq_kHz, chD_dBu, 'r', 'LineWidth', 1.3);
+grid on;
+
+xlabel('Frequenza [kHz]');
+ylabel('Ampiezza [dBu]');
+title('Spettro Vout1 (B) e Vout2 (D)');
+legend({'Channel B (Vout1)','Channel D (Vout2)'}, 'Location', 'best');
+%set(gca, 'XScale', 'log'); % scala logaritmica consigliata
