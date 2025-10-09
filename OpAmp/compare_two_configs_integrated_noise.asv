@@ -13,28 +13,27 @@ fmin = 0.04;   % kHz -> 50 Hz
 fmax = 10;     % kHz -> 10 kHz
 
 %% === Elaborazione configurazioni ===
-[f1, B1, D1, A1, C1, meanB1, meanD1, meanA1, meanC1, stdB1, stdD1, stdA1, stdC1, nB1, nD1] = processFolder(folder1, fmin, fmax);
-[f2, B2, D2, A2, C2, meanB2, meanD2, meanA2, meanC2, stdB2, stdD2, stdA2, stdC2, nB2, nD2] = processFolder(folder2, fmin, fmax);
+[f1, B1, D1, A, C, meanB1, meanD1, meanA, meanC, stdB1, stdD1, stdA, stdC, nB1, nD1] = processFolder(folder1, fmin, fmax);
+[f2, B2, D2, ~, ~, meanB2, meanD2, ~, ~, stdB2, stdD2, ~, ~, nB2, nD2] = processFolder(folder2, fmin, fmax);
 
 %% === Overlay per ciascuna configurazione ===
 for cfg = 1:2
     figure('Name',sprintf('Overlay Config %d',cfg),'NumberTitle','off'); hold on;
-
     if cfg==1
-        allA = A1; allB = B1; allC = C1; allD = D1; 
-        meanA_plt = meanA1; meanB_plt = meanB1; meanC_plt = meanC1; meanD_plt = meanD1;
-        stdA_plt  = stdA1;  stdB_plt  = stdB1;  stdC_plt  = stdC1;  stdD_plt  = stdD1;
+        allA = A; allB = B1; allC = C; allD = D1; 
+        meanA_plt = meanA; meanB_plt = meanB1; meanC_plt = meanC; meanD_plt = meanD1;
+        stdA_plt  = stdA;  stdB_plt  = stdB1;  stdC_plt  = stdC;  stdD_plt  = stdD1;
         f = f1; label='400k';
     else
-        allA = A2; allB = B2; allC = C2; allD = D2;
-        meanA_plt = meanA2; meanB_plt = meanB2; meanC_plt = meanC2; meanD_plt = meanD2;
-        stdA_plt  = stdA2;  stdB_plt  = stdB2;  stdC_plt  = stdC2;  stdD_plt  = stdD2;
+        allA = A; allB = B2; allC = C; allD = D2;
+        meanA_plt = meanA; meanB_plt = meanB2; meanC_plt = meanC; meanD_plt = meanD2;
+        stdA_plt  = stdA;  stdB_plt  = stdB2;  stdC_plt  = stdC;  stdD_plt  = stdD2;
         f = f2; label='4M';
     end
 
     % Spettri trasparenti
-    plot(f, allA, 'Color', [0.5 0.5 0.5]);
-    plot(f, allB, 'Color', [0.7 0.85 1]);
+    plot(f, allA, 'Color', 'y');
+    plot(f, allB, 'Color', 'k');
     plot(f, allC, 'Color', [1 1 0.6]);
     plot(f, allD, 'Color', [1 0.8 0.8]);
 
@@ -45,21 +44,21 @@ for cfg = 1:2
     fillY_C = [meanC_plt+stdC_plt; flipud(meanC_plt-stdC_plt)];
     fillY_D = [meanD_plt+stdD_plt; flipud(meanD_plt-stdD_plt)];
 
-    patch('XData', fillX, 'YData', fillY_C, 'FaceColor','y','FaceAlpha',0.15,'EdgeColor','none');
     patch('XData', fillX, 'YData', fillY_A, 'FaceColor',[0.6 0.6 0.6],'FaceAlpha',0.15,'EdgeColor','none');
     patch('XData', fillX, 'YData', fillY_B, 'FaceColor','b','FaceAlpha',0.15,'EdgeColor','none');
+    patch('XData', fillX, 'YData', fillY_C, 'FaceColor','y','FaceAlpha',0.15,'EdgeColor','none');
     patch('XData', fillX, 'YData', fillY_D, 'FaceColor','r','FaceAlpha',0.12,'EdgeColor','none');
 
     % Linee medie
-    hC = plot(f, meanC_plt, 'y-', 'LineWidth',1.5); % V+
-    hA = plot(f, meanA_plt, 'k-', 'LineWidth',1.5); % Vin
-    hB = plot(f, meanB_plt, 'b-', 'LineWidth',1.5); % Vout1    
-    hD = plot(f, meanD_plt, 'r-', 'LineWidth',1.5); % Vout2
+    plot(f, meanA_plt, 'k-', 'LineWidth',1.5); % Vin
+    plot(f, meanB_plt, 'b-', 'LineWidth',1.5); % Vout1
+    plot(f, meanC_plt, 'y-', 'LineWidth',1.5); % V+
+    plot(f, meanD_plt, 'r-', 'LineWidth',1.5); % Vout2
 
     ylim([-100 20]);
     xlabel('Frequenza [kHz]'); ylabel('Ampiezza [dBu]');
     title(['Overlay Config ',label,': Vin(A), Vout1(B), V+(C), Vout2(D)']);
-    legend([hA hB hC hD], {'Vin','Vout1','V+','Vout2'}, 'Location','best');
+    legend({'Vin','Vout1','V+','Vout2'},'Location','best');
 end
 
 %% === Confronto tra configurazioni per ciascun canale ===
