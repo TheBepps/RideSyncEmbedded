@@ -1,6 +1,6 @@
 LTspice 24.1.10 for Windows
 Circuit: C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\OpAmp\curr_meas_dc_v1.net
-Start Time: Wed Oct  8 15:29:34 2025
+Start Time: Tue Oct 14 11:12:41 2025
 solver = Normal
 Maximum thread count: 8
 tnom = 27
@@ -9,7 +9,7 @@ method = trap
 C3: Increased Cpar to 1e-11
 C4: Increased Cpar to 1e-11
 Direct Newton iteration for .op point succeeded.
-Total elapsed time: 0.437 seconds.
+Total elapsed time: 0.310 seconds.
 
 Files loaded:
 C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\OpAmp\curr_meas_dc_v1.net
