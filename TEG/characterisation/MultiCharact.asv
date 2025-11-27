@@ -9,7 +9,7 @@ clear; clc; close all;
 basePath = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\TEG\characterisation\';
 
 % List of available temperature deltas
-tempList = [5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 105 110];
+tempList = [5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90];%60 65 70 75 80 85 90];
 legendEntries = cell(length(tempList), 1);
 
 % Preallocate summary table
@@ -186,9 +186,9 @@ for n = 1:length(tempList)
 
     % Load raw data
     Tval = tempList(n);
-    file_keithley = fullfile(basePath, 'Data', sprintf('%d.csv', Tval));
+    %file_keithley = fullfile(basePath, 'Data', sprintf('%d.csv', Tval));
 
-    opts = detectImportOptions(file_keithley);
+    %opts = detectImportOptions(file_keithley);
     Tk = readtable(file_keithley, opts);
 
     I = abs(Tk.Reading);
