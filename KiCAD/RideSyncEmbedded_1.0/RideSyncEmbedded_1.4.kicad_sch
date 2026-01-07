@@ -13586,7 +13586,7 @@
 				)
 			)
 		)
-		(property "Value" "3.3M"
+		(property "Value" "4.7M"
 			(at 81.28 96.52 90)
 			(effects
 				(font
@@ -16225,7 +16225,7 @@
 				)
 			)
 		)
-		(property "Value" "5.76M"
+		(property "Value" "8.2M"
 			(at 91.44 96.52 90)
 			(effects
 				(font
