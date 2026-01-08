@@ -24,7 +24,7 @@ samples_per_step = 200;   % <<< come nel TEG
 figure('Name','PV P–V Characteristics (with error bars)','Color','w');
 hold on; grid on; box on;
 xlabel('Voltage [V]');
-ylabel('Power [W]');
+ylabel('Power [mW]');
 title('PV P–V Curves');
 
 %% === SUMMARY TABLE ===
@@ -42,7 +42,7 @@ for n = 1:nTests
     T = readtable(file);
 
     V = T.Value;
-    P = abs(T.Reading);
+    P = abs(T.Reading)*1000; %mW conversion
 
     %% === Group samples per step ===
     n_steps = floor(length(V)/samples_per_step);
@@ -95,7 +95,7 @@ for n = 1:nTests
     %% === Legend entry (PV-style, not TEG) ===
     legendEntries{n} = sprintf( ...
         'Voc ≈ %.1f V | Vmpp = %.2f V | Pmpp = %.3f mW', ...
-        Voc_nom, Vmpp, 1e3*Pmpp);
+        Voc_nom, Vmpp, Pmpp);
 
     %% === Store summary ===
     summary(n,:) = {Voc_nom, Vmpp, Pmpp, PmppStd};
@@ -106,6 +106,13 @@ end
 
 axMain = gca;
 axis(axMain,'tight');
+yl = ylim(axMain);
+xl = xlim(axMain);
+marginY = 0.08;   % 8% verticale
+marginX = 0.03;   % 3% orizzontale
+
+ylim(axMain, [yl(1), yl(2)*(1+marginY)]);
+xlim(axMain, [xl(1), xl(2)*(1+marginX)]);
 
 pbaspect(axMain,[16 9 1]);   % oppure [4 3 1] se vuoi più largo
 
@@ -116,18 +123,8 @@ legend(legendEntries, 'Location','northwest');
 % ============================================================
 
 % Create inset axes (normalized figure coordinates)
-axInset = axes('Position',[0.19 0.3 0.25 0.28]);  % [x y w h]
+axInset = axes('Position',[0.18 0.3 0.25 0.28]);  % [x y w h]
 hold(axInset,'on'); grid(axInset,'on'); box(axInset,'on');
-
-xlim(axInset, [0 2.1]);
-ylim(axInset, [0 1.2*max(summary.Pmpp(summary.Voc <= 2))]);
-
-axis(axInset,'tight');
-pbaspect(axInset, pbaspect(axMain));
-
-xlabel(axInset,'Voltage [V]');
-ylabel(axInset,'Power [W]');
-title(axInset,'Zoom: Voc = 1–2 V');
 
 % Plot only Voc = 1 V and 2 V
 for n = 1:nTests
@@ -135,7 +132,7 @@ for n = 1:nTests
 
         errorbar(axInset, ...
             PVdata(n).V, ...
-            PVdata(n).P, ...
+            PVdata(n).P*1000, ...%uW conversion
             PVdata(n).Pstd, ...
             '-', ...
             'Color', colors(n,:), ...
@@ -145,10 +142,23 @@ for n = 1:nTests
 
         % Mark MPP
         [Pmpp, idx] = max(PVdata(n).P);
-        Vmpp = PVdata(n).V(idx);
-        plot(axInset, Vmpp, Pmpp, 'ro', ...
+        Vmpp = PVdata(n).V(idx); 
+        plot(axInset, Vmpp, Pmpp*1000, 'ro', ... %uW conversion
             'MarkerFaceColor','r', 'MarkerSize',5);
     end
+
+    axis(axInset,'tight');
+    yl_i = ylim(axInset);
+    xl_i = xlim(axInset);
+    
+    ylim(axInset, [yl_i(1), yl_i(2)*(1+marginY)]);
+    xlim(axInset, [xl_i(1), xl_i(2)*(1+marginX)]);
+    
+    pbaspect(axInset, pbaspect(axMain));
+    
+    xlabel(axInset,'Voltage [V]');
+    ylabel(axInset,'Power [uW]');
+    title(axInset,'Zoom: Voc = 1–2 V');
 end
 
 
