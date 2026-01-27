@@ -1,6 +1,7 @@
 %% ENERGY HARVESTING SYSTEM ANALYSIS
 % This script analyzes the power generation, storage, and consumption 
 % of a hybrid energy harvesting system (TEG + PV).
+%FROM ZERO (COLD START) TO VCout=5V
 %
 % Methodology:
 % MEASURED OFFESTS 
@@ -13,8 +14,9 @@
 clear; clc; close all;
 
 % --- 1. CONFIGURATION AND DATA LOADING ---
-basePath = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\Final test\ft3\ft3c';
-fileName = fullfile(basePath, 'Global_ft3c.mat');
+
+basePath = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\Final test\ft5\ft5c'; %CHANGE THE VALUE OF THE CAPACITOR!!!!
+fileName = fullfile(basePath, 'Global_ft5c.mat');
 
 if ~isfile(fileName)
     error('Error: File not found at %s', fileName);
@@ -22,54 +24,6 @@ end
 
 fprintf('Loading dataset: %s ...\n', fileName);
 load(fileName, 'GlobalData');
-
-% --- 1.B DATA SLICING (WHOLE CYCLES ONLY) ---
-% Find the analysis window: from the first time Vout is FULL to the last time it is FULL.
-% This ensures Energy_Final approx Energy_Initial for accurate efficiency calc.
-
-raw_Vout = GlobalData.Vout;
-n_total_raw = length(raw_Vout);
-
-% 1. Determine "Full Charge" Threshold (robust against noise)
-% We consider "Max" as 99.5% of the absolute peak voltage found.
-v_max_abs = max(raw_Vout); 
-v_threshold_high = v_max_abs * 0.995; 
-
-% 2. Find all indices where Vout is in the "High/Full" state
-high_indices = find(raw_Vout >= v_threshold_high);
-
-if isempty(high_indices)
-    error('Error: Voltage never reaches the expected maximum threshold.');
-end
-
-% 3. Define Start (First recurrence) and End (Last recurrence)
-idx_start = high_indices(1);
-idx_end   = high_indices(end);
-
-% 4. Report Slicing Statistics to Console
-n_discard_start = idx_start - 1;
-n_discard_end   = n_total_raw - idx_end;
-
-fprintf('\n--- DATA SLICING REPORT ---\n');
-fprintf('Threshold used for "Max Charge": %.4f V (Max Peak was %.4f V)\n', v_threshold_high, v_max_abs);
-fprintf('Total Samples available: %d\n', n_total_raw);
-fprintf('Discarded Head (Start):  %d / %d samples (%.2f%%)\n', ...
-    n_discard_start, n_total_raw, (n_discard_start/n_total_raw)*100);
-fprintf('Discarded Tail (End):    %d / %d samples (%.2f%%)\n', ...
-    n_discard_end,   n_total_raw, (n_discard_end/n_total_raw)*100);
-fprintf('Selected Analysis Window: %d samples\n', idx_end - idx_start + 1);
-fprintf('---------------------------\n\n');
-
-% 5. Apply Slicing to ALL fields in GlobalData
-% We iterate dynamically through the struct to cut all vectors (Time, Voltages, Currents)
-field_names = fieldnames(GlobalData);
-for k = 1:numel(field_names)
-    fn = field_names{k};
-    % Check if the field is a vector of the matching length (to avoid cutting metadata)
-    if isvector(GlobalData.(fn)) && length(GlobalData.(fn)) == n_total_raw
-        GlobalData.(fn) = GlobalData.(fn)(idx_start:idx_end);
-    end
-end
 
 % --- Hardware Constants ---
 % Shunt Resistors (Ohm)
@@ -87,7 +41,7 @@ GainA_TEG = 21.6;
 % Capacitor Bank Capacitances (Farad)
 C_out = 44.25e-3;  % Main Output Buffer
 C_bT  = 124.2e-3;  % TEG Internal Storage
-C_bP  = 120e-3;   % PV Internal Storage
+C_bP  = 30.4e-3;   % PV Internal Storage
 
 % Analysis Parameters
 smooth_win = 3000; % Window size for smoothing energy derivatives | @15kS/s->3000 = 10NPLCs 10 periods of 50hertz)
@@ -108,6 +62,46 @@ sorted_PV  = sort(GlobalData.Vcurr_PV);
 % Measured offset
 offset_TEG = 0.136;
 offset_PV = 0.006;
+
+% --- 2.B DATA SLICING (START TO FIRST FULL CHARGE) ---
+% Analysis window: From t=0 until the FIRST time Vout reaches the target voltage.
+% This measures the "Cold Start" or initial charging phase.
+
+n_total_original = length(GlobalData.Vcurr_TEG);
+raw_Vout = GlobalData.Vout;
+
+% 1. Determine "Full Charge" Threshold
+% We consider "Max" as 99% of the absolute peak voltage found.
+v_max_abs = max(raw_Vout); 
+v_threshold_high = v_max_abs * 0.995; 
+
+% 2. Find indices where Vout is Full
+high_indices = find(raw_Vout >= v_threshold_high);
+
+if isempty(high_indices)
+    warning('Voltage never reaches stable max. Using full dataset.');
+else
+    % 3. Define Start and End (MODIFIED)
+    idx_start = 1;                  % Start from the very beginning of the recording
+    idx_end   = high_indices(1);    % Stop at the FIRST moment it becomes full
+    
+    % 4. Report Slicing Statistics
+    n_discard_start = idx_start - 1; % Should be 0
+    n_discard_end   = n_total_original - idx_end;
+    
+    fprintf('\n--- DATA SLICING REPORT (CHARGING PHASE ONLY) ---\n');
+    fprintf('Target Voltage Threshold: %.3f V\n', v_threshold_high);
+    fprintf('Original Samples: %d\n', n_total_original);
+    fprintf('Discarded Head:   %d (%.2f%%) [Preserved Start]\n', ...
+        n_discard_start, (n_discard_start/n_total_original)*100);
+    fprintf('Discarded Tail:   %d (%.2f%%) [Cut after first full charge]\n', ...
+        n_discard_end, (n_discard_end/n_total_original)*100);
+    fprintf('Kept Samples:     %d\n', idx_end - idx_start + 1);
+    fprintf('---------------------------\n');
+    
+    % 5. Apply Slicing to GLOBALDATA TABLE
+    GlobalData = GlobalData(idx_start:idx_end, :);
+end
 
 % B. Offset Removal and Clamping
 % Subtract offset and clamp negative values to zero to remove noise floor artifacts.
@@ -174,7 +168,7 @@ fprintf('==================================================\n');
 fprintf('Calibration Offsets Removed:\n');
 fprintf('   TEG Offset: %.6f V\n', offset_TEG);
 fprintf('   PV Offset:  %.6f V\n', offset_PV);
-fprintf('   The offset was averaged using %d samples out of %d total.\n', n_offset, n_total);
+%fprintf('   The offset was averaged using %d samples out of %d total.\n', n_offset, n_total);
 fprintf('--------------------------------------------------\n');
 
 fprintf('1. POWER GENERATION (Average)\n');

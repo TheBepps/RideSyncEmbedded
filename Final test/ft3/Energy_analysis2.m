@@ -14,8 +14,8 @@ clear; clc; close all;
 
 % --- 1. CONFIGURATION AND DATA LOADING ---
 
-basePath = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\Final test\ft3\ft3e'; %CHANGE THE VALUE OF THE CAPACITOR!!!!
-fileName = fullfile(basePath, 'Global_ft3e.mat');
+basePath = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\Final test\ft3\ft3d'; %CHANGE THE VALUE OF THE CAPACITOR!!!!
+fileName = fullfile(basePath, 'Global_ft3d.mat');
 
 if ~isfile(fileName)
     error('Error: File not found at %s', fileName);
@@ -40,7 +40,7 @@ GainA_TEG = 21.6;
 % Capacitor Bank Capacitances (Farad)
 C_out = 44.25e-3;  % Main Output Buffer
 C_bT  = 124.2e-3;  % TEG Internal Storage
-C_bP  = 21.35e-3;   % PV Internal Storage
+C_bP  = 4.56e-3;   % PV Internal Storage
 
 % Analysis Parameters
 smooth_win = 3000; % Window size for smoothing energy derivatives | @15kS/s->3000 = 10NPLCs 10 periods of 50hertz)

@@ -1,0 +1,1 @@
+test con solo enable alto, ovvero faccio lavorare solo il teg, e il pv sta a circuito aperto, il pv contribuisce solo per le sue perdite interne nel suo ramo fino al'ingresso 2 dei load switch

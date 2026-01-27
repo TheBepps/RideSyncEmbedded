@@ -2,9 +2,9 @@
 clear; clc; close all;
 
 % --- PATH DEFINITION ---
-basePath = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\Final test\ft4\ft4b';
-path_file1 = fullfile(basePath, 'ft4b1');
-path_file2 = fullfile(basePath, 'ft4b2');
+basePath = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\Final test\ft4\ft4k';
+path_file1 = fullfile(basePath, 'ft4k1');
+path_file2 = fullfile(basePath, 'ft4k2');
 
 % --- FILE LISTING & SORTING ---
 d1 = dir(fullfile(path_file1, '*.csv'));
