@@ -15,8 +15,8 @@ clear; clc; close all;
 
 % --- 1. CONFIGURATION AND DATA LOADING ---
 
-basePath = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\Final test\ft5\ft5c'; %CHANGE THE VALUE OF THE CAPACITOR!!!!
-fileName = fullfile(basePath, 'Global_ft5c.mat');
+basePath = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\Final test\ft5\ft5b'; %CHANGE THE VALUE OF THE CAPACITOR!!!!
+fileName = fullfile(basePath, 'Global_ft5b.mat');
 
 if ~isfile(fileName)
     error('Error: File not found at %s', fileName);
@@ -147,12 +147,21 @@ E_sys_smooth = smoothdata(E_sys_raw, 'gaussian', smooth_win);
 dE_sys = [0; diff(E_sys_smooth)];
 Energy_Harvested_Net = sum(dE_sys(dE_sys > 0));
 
+% E. Storage State Correction (Residual Energy)
+% Calculates the net change in stored energy between the start and end of the analysis.
+% Since the analysis cuts based on Vout (Full->Full), the delta on Cout is negligible.
+% However, C_bT and C_bP may have accumulated energy (Start=Empty, End=Full).
+% This residual energy is "Harvested" but not "Consumed", so it must be credited.
+E_sys_start = E_sys_smooth(1);
+E_sys_end   = E_sys_smooth(end);
+Delta_Storage_Residue = E_sys_end - E_sys_start;
+
 % C. Energy Consumed (Output)
 % Calculated by looking exclusively at the Output Capacitor (C_out).
 % Sums all NEGATIVE increments (discharges), representing energy delivered to load.
 E_out_smooth = smoothdata(0.5 * C_out * GlobalData.Vout.^2, 'gaussian', smooth_win);
 dE_out = [0; diff(E_out_smooth)];
-Energy_Consumed_Load = abs(sum(dE_out(dE_out < 0)));
+Energy_Consumed_Load = abs(sum(dE_out(dE_out < 0))) + Delta_Storage_Residue;
 
 % D. Gross Generated Energy (Source Side)
 % Integral of Power over time

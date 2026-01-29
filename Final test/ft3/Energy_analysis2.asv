@@ -14,8 +14,8 @@ clear; clc; close all;
 
 % --- 1. CONFIGURATION AND DATA LOADING ---
 
-basePath = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\Final test\ft3\ft3b2'; %CHANGE THE VALUE OF THE CAPACITOR!!!!
-fileName = fullfile(basePath, 'Global_ft3b2.mat');
+basePath = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\Final test\ft3\ft3d'; %CHANGE THE VALUE OF THE CAPACITOR!!!!
+fileName = fullfile(basePath, 'Global_ft3d.mat');
 
 if ~isfile(fileName)
     error('Error: File not found at %s', fileName);
@@ -166,11 +166,6 @@ fprintf('Calibration Offsets Removed:\n');
 fprintf('   TEG Offset: %.6f V\n', offset_TEG);
 fprintf('   PV Offset:  %.6f V\n', offset_PV);
 %fprintf('   The offset was averaged using %d samples out of %d total.\n', n_offset, n_total);
-fprintf('--------------------------------------------------\n');
-
-fprintf('P/C rateo:\n');
-fprintf('   TEG rateo: %.6f\n', Avg_P_TEG/C_bT);
-fprintf('   PV  rateo: %.6f\n', Avg_P_PV/C_bP);
 fprintf('--------------------------------------------------\n');
 
 fprintf('1. POWER GENERATION (Average)\n');
