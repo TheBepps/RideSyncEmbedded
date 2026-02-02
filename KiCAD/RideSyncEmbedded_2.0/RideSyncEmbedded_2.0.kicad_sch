@@ -15705,7 +15705,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "0.022F"
+		(property "Value" "0.021F"
 			(at 189.23 34.9249 0)
 			(effects
 				(font
