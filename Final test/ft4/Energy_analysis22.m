@@ -14,8 +14,8 @@ clear; clc; close all;
 
 % --- 1. CONFIGURATION AND DATA LOADING ---
 
-basePath = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\Final test\ft4\ft4z'; %CHANGE THE VALUE OF THE CAPACITOR!!!!
-fileName = fullfile(basePath, 'Global_ft4z.mat');
+basePath = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\Final test\ft4\ft4x'; %CHANGE THE VALUE OF THE CAPACITOR!!!!
+fileName = fullfile(basePath, 'Global_ft4x.mat');
 
 if ~isfile(fileName)
     error('Error: File not found at %s', fileName);
