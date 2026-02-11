@@ -1,8 +1,8 @@
 clear; clc; close all;
 
 %% === FILE PATHS ===
-fileFit = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\OpAmp\SourceMeter-sweep_DC_current-I_V_Test\fitting1.csv';
-fileTest = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\OpAmp\SourceMeter-sweep_DC_current-I_V_Test\misura2.csv';
+fileFit = 'C:\Users\user\Documents\GitHub\RideSyncEmbedded\OpAmp\SourceMeter-sweep_DC_current-I_V_Test\fitting1.csv';
+fileTest = 'C:\Users\user\Documents\GitHub\RideSyncEmbedded\OpAmp\SourceMeter-sweep_DC_current-I_V_Test\misura2.csv';
 
 %% === READ DATA (Fit dataset) ===
 opts = detectImportOptions(fileFit);
