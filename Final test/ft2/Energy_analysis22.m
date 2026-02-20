@@ -208,30 +208,43 @@ fprintf('==================================================\n');
 % --- 6. VISUALIZATION ---
 figure('Name', 'System Energy Analysis', 'Color', 'w');
 
-% Subplot 1: Source Power
-subplot(3,1,1);
+t = tiledlayout(3,1);
+t.TileSpacing = 'compact';
+t.Padding = 'compact';
+
+%% --- Subplot 1 ---
+nexttile;
 plot(GlobalData.Time, P_TEG*1000, 'r'); hold on;
 plot(GlobalData.Time, P_PV*1000, 'b');
-ylabel('Power (mW)'); 
+ylabel('Power (mW)');
 title('Instantaneous Source Power (Calibrated)');
-legend('TEG', 'PV'); grid on;
+legend('TEG', 'PV', 'Location', 'eastoutside');
+grid on;
 
-% Subplot 2: Capacitor Voltages
-subplot(3,1,2);
+%% --- Subplot 2 ---
+nexttile;
 plot(GlobalData.Time, GlobalData.Vout, 'k', 'LineWidth', 1.5); hold on;
 plot(GlobalData.Time, GlobalData.Vbatt_TEG, 'r--');
 plot(GlobalData.Time, GlobalData.Vbatt_PV, 'b--');
-ylabel('Voltage (V)'); 
+ylabel('Voltage (V)');
 title('Capacitor Bank Voltages');
-legend('Vout (Load)', 'Vbatt TEG', 'Vbatt PV'); grid on;
+legend('Vout (Load)', 'Vbatt TEG', 'Vbatt PV', 'Location', 'eastoutside');
+grid on;
 
-% Subplot 3: Energy Dynamics
-subplot(3,1,3);
-% Plot Total System Energy
-plot(GlobalData.Time, E_sys_smooth, 'Color', [0, 0.6, 0], 'LineWidth', 1.5); hold on;
-% Highlight Consumption phases (Cout discharge)
-area(GlobalData.Time, -dE_out .* (dE_out < 0) * 100, 'FaceColor', 'r', 'EdgeColor', 'none', 'FaceAlpha', 0.3);
-ylabel('Energy (J)'); 
+%% --- Subplot 3 ---
+nexttile;
+plot(GlobalData.Time, E_sys_smooth, ...
+     'Color', [0, 0.6, 0], ...
+     'LineWidth', 1.5);
+hold on;
+
+area(GlobalData.Time, -dE_out .* (dE_out < 0) * 100000, ...
+     'FaceColor', 'r', ...
+     'EdgeColor', 'none', ...
+     'FaceAlpha', 0.3);
+
+ylabel('Energy (J)');
 title('System Energy Storage (Green) vs Load Consumption Events (Red Area)');
-legend('Total System Energy', 'Discharge Events'); 
+legend('Total System Energy', 'Discharge Events', 'Location', 'eastoutside');
+ylim([0 max(E_sys_smooth)*1.1]);
 grid on;
