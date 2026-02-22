@@ -14,8 +14,8 @@ clear; clc; close all;
 
 % --- 1. CONFIGURATION AND DATA LOADING ---
 
-basePath = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\Final test\ft3\ft3b2'; %CHANGE THE VALUE OF THE CAPACITOR!!!!
-fileName = fullfile(basePath, 'Global_ft3b2.mat');
+basePath = 'C:\Users\Admin\Documents\GitHub\RideSyncEmbedded\Final test\ft3\ft3d2'; %CHANGE THE VALUE OF THE CAPACITOR!!!!
+fileName = fullfile(basePath, 'Global_ft3d2.mat');
 
 if ~isfile(fileName)
     error('Error: File not found at %s', fileName);
@@ -40,7 +40,7 @@ GainA_TEG = 21.6;
 % Capacitor Bank Capacitances (Farad)
 C_out = 44.25e-3;  % Main Output Buffer
 C_bT  = 124.2e-3;  % TEG Internal Storage
-C_bP  = 21.35e-3;   % PV Internal Storage
+C_bP  = 51.5e-3;   % PV Internal Storage
 
 % Analysis Parameters
 smooth_win = 3000; % Window size for smoothing energy derivatives | @15kS/s->3000 = 10NPLCs 10 periods of 50hertz)
@@ -208,30 +208,43 @@ fprintf('==================================================\n');
 % --- 6. VISUALIZATION ---
 figure('Name', 'System Energy Analysis', 'Color', 'w');
 
-% Subplot 1: Source Power
-subplot(3,1,1);
+t = tiledlayout(3,1);
+t.TileSpacing = 'compact';
+t.Padding = 'compact';
+
+%% --- Subplot 1 ---
+nexttile;
 plot(GlobalData.Time, P_TEG*1000, 'r'); hold on;
 plot(GlobalData.Time, P_PV*1000, 'b');
-ylabel('Power (mW)'); 
+ylabel('Power (mW)');
 title('Instantaneous Source Power (Calibrated)');
-legend('TEG', 'PV'); grid on;
+legend('TEG', 'PV', 'Location', 'eastoutside');
+grid on;
 
-% Subplot 2: Capacitor Voltages
-subplot(3,1,2);
+%% --- Subplot 2 ---
+nexttile;
 plot(GlobalData.Time, GlobalData.Vout, 'k', 'LineWidth', 1.5); hold on;
 plot(GlobalData.Time, GlobalData.Vbatt_TEG, 'r--');
 plot(GlobalData.Time, GlobalData.Vbatt_PV, 'b--');
-ylabel('Voltage (V)'); 
+ylabel('Voltage (V)');
 title('Capacitor Bank Voltages');
-legend('Vout (Load)', 'Vbatt TEG', 'Vbatt PV'); grid on;
+legend('Vout (Load)', 'Vbatt TEG', 'Vbatt PV', 'Location', 'eastoutside');
+grid on;
 
-% Subplot 3: Energy Dynamics
-subplot(3,1,3);
-% Plot Total System Energy
-plot(GlobalData.Time, E_sys_smooth, 'Color', [0, 0.6, 0], 'LineWidth', 1.5); hold on;
-% Highlight Consumption phases (Cout discharge)
-area(GlobalData.Time, -dE_out .* (dE_out < 0) * 100, 'FaceColor', 'r', 'EdgeColor', 'none', 'FaceAlpha', 0.3);
-ylabel('Energy (J)'); 
+%% --- Subplot 3 ---
+nexttile;
+plot(GlobalData.Time, E_sys_smooth, ...
+     'Color', [0, 0.6, 0], ...
+     'LineWidth', 1.5);
+hold on;
+
+area(GlobalData.Time, -dE_out .* (dE_out < 0) * 100000, ...
+     'FaceColor', 'r', ...
+     'EdgeColor', 'none', ...
+     'FaceAlpha', 0.3);
+
+ylabel('Energy (J)');
 title('System Energy Storage (Green) vs Load Consumption Events (Red Area)');
-legend('Total System Energy', 'Discharge Events'); 
+legend('Total System Energy', 'Discharge Events', 'Location', 'eastoutside');
+ylim([0 max(E_sys_smooth)*1.1]);
 grid on;
