@@ -11455,7 +11455,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "615dd674-ed22-43f0-9610-a41ba1242084")
-		(property "Reference" "C_store2"
+		(property "Reference" "C_PV"
 			(at 170.18 80.6449 0)
 			(effects
 				(font
@@ -11518,7 +11518,7 @@
 		(instances
 			(project "RideSyncEmbedded_1.4"
 				(path "/2814c729-d4e6-4af1-8503-05b33a930358"
-					(reference "C_store2")
+					(reference "C_PV")
 					(unit 1)
 				)
 			)
@@ -14454,7 +14454,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d8b68e8a-9729-49f5-9cb6-e10e96c06c22")
-		(property "Reference" "C_store1"
+		(property "Reference" "C_TEG"
 			(at 189.23 32.3849 0)
 			(effects
 				(font
@@ -14517,7 +14517,7 @@
 		(instances
 			(project "RideSyncEmbedded_2.0"
 				(path "/2814c729-d4e6-4af1-8503-05b33a930358"
-					(reference "C_store1")
+					(reference "C_TEG")
 					(unit 1)
 				)
 			)
@@ -14676,7 +14676,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C_load"
+		(property "Value" "C_out"
 			(at 275.59 39.3699 0)
 			(effects
 				(font
