@@ -1,0 +1,2 @@
+For energy analysis, go into the folder ftXY and export CSV data from psdata files.
+Then run ftX_sync.m script and finally Energy_analysisX.m
